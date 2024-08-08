@@ -1,0 +1,6 @@
+CompileFlags:
+  CompilationDatabase: ./build
+  Add:
+    - "-I/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include"
+    - "-I/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1"
+
