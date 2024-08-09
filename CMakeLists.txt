@@ -15,7 +15,6 @@ set( SOURCE_LEARN_SDL
 )
 
 include_directories(src)
-include_directories(${SDL2_INCLUDE_DIRS})
 
 message ( STATUS "Compiler ID: " ${CMAKE_CXX_COMPILER_ID})
 message ( STATUS "Release flags: " ${CMAKE_CXX_FLAGS_RELEASE})
@@ -36,4 +35,5 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_executable( LearnSDL ${SOURCE_LEARN_SDL})
+target_include_directories( LearnSDL PRIVATE ${SDL2_INCLUDE_DIRS} src )
 target_link_libraries( LearnSDL PRIVATE ${SDL2_LIBRARIES} )
