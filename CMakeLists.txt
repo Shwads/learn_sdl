@@ -37,4 +37,4 @@ endif()
 
 add_executable( LearnSDL ${SOURCE_LEARN_SDL})
 target_include_directories( LearnSDL PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_DIR} src )
-target_link_libraries( LearnSDL PRIVATE ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} )
+target_link_libraries( LearnSDL PRIVATE ${SDL2_LIBRARIES} SDL2_image::SDL2_image )
