@@ -3,6 +3,7 @@ cmake_minimum_required( VERSION 3.8 )
 project( learn_sdl LANGUAGES CXX )
 
 find_package( SDL2 REQUIRED )
+find_package( SDL2_IMAGE REQUIRED )
 
 set( CMAKE_CXX_STANDARD 23 )
 set( CMAKE_CXX_STANDARD_REQUIRED ON )
@@ -35,5 +36,5 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_executable( LearnSDL ${SOURCE_LEARN_SDL})
-target_include_directories( LearnSDL PRIVATE ${SDL2_INCLUDE_DIRS} src )
-target_link_libraries( LearnSDL PRIVATE ${SDL2_LIBRARIES} )
+target_include_directories( LearnSDL PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_DIR} src )
+target_link_libraries( LearnSDL PRIVATE ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} )
