@@ -100,14 +100,6 @@ SDL_Texture *load_texture(std::string path) {
 
 bool load_media() {
   bool success = true;
-
-  // Load png texture
-  gTexture = load_texture("07_texture_loading_and_rendering/texture.png");
-  if (gTexture == NULL) {
-    printf("Failed to load texture image!\n");
-    success = false;
-  }
-
   return success;
 }
 
@@ -153,11 +145,32 @@ int main() {
           }
         }
 
-        // Clear screen 
+        // Clear screen
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer);
 
-        // Render texture to screen
-        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+        // Render red filled rectangle
+        SDL_Rect fill_rect = {SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4,
+                              SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+        SDL_RenderFillRect(gRenderer, &fill_rect);
+
+        // Render green outlined rectangle
+        SDL_Rect outline_rect = {SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6,
+                                 SCREEN_WIDTH * 2 / 3, SCREEN_HEIGHT * 2 / 3};
+        SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0x00, 0xFF);
+        SDL_RenderDrawRect(gRenderer, &outline_rect);
+
+        // Draw a line to the screen
+        SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xFF, 0xFF);
+        SDL_RenderDrawLine(gRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+
+        // Draw vertical line of yellow dots
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0x00, 0xFF);
+
+        for (int x = 0; x < SCREEN_HEIGHT; x++) {
+            SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, x);
+        }
 
         // Update screen
         SDL_RenderPresent(gRenderer);
