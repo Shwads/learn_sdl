@@ -100,6 +100,14 @@ SDL_Texture *load_texture(std::string path) {
 
 bool load_media() {
   bool success = true;
+
+  gTexture = load_texture("09_the_viewport/viewport.png");
+
+  if (gTexture == NULL) {
+    printf("Unable to load texture! SDL Error: %s\n", SDL_GetError());
+    success = false;
+  }
+
   return success;
 }
 
@@ -149,28 +157,38 @@ int main() {
         SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer);
 
-        // Render red filled rectangle
-        SDL_Rect fill_rect = {SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4,
-                              SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
-        SDL_RenderFillRect(gRenderer, &fill_rect);
+        // Render top left corner viewport
+        SDL_Rect topLeftViewport;
+        topLeftViewport.x = 0;
+        topLeftViewport.y = 0;
+        topLeftViewport.w = SCREEN_WIDTH / 2;
+        topLeftViewport.h = SCREEN_HEIGHT / 2;
+        SDL_RenderSetViewport(gRenderer, &topLeftViewport);
 
-        // Render green outlined rectangle
-        SDL_Rect outline_rect = {SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6,
-                                 SCREEN_WIDTH * 2 / 3, SCREEN_HEIGHT * 2 / 3};
-        SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0x00, 0xFF);
-        SDL_RenderDrawRect(gRenderer, &outline_rect);
+        // Render texture to the screen
+        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 
-        // Draw a line to the screen
-        SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xFF, 0xFF);
-        SDL_RenderDrawLine(gRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+        // Render top right corner viewport
+        SDL_Rect topRightViewport;
+        topRightViewport.x = SCREEN_WIDTH / 2;
+        topRightViewport.y = 0;
+        topRightViewport.w = SCREEN_WIDTH / 2;
+        topRightViewport.h = SCREEN_HEIGHT / 2;
+        SDL_RenderSetViewport(gRenderer, &topRightViewport);
 
-        // Draw vertical line of yellow dots
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0x00, 0xFF);
+        // Render texture to the screen
+        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 
-        for (int x = 0; x < SCREEN_HEIGHT; x++) {
-            SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, x);
-        }
+        // Render bottom half
+        SDL_Rect bottomHalf;
+        bottomHalf.x = 0;
+        bottomHalf.y = SCREEN_HEIGHT / 2;
+        bottomHalf.w = SCREEN_WIDTH;
+        bottomHalf.h = SCREEN_HEIGHT / 2;
+        SDL_RenderSetViewport(gRenderer, &bottomHalf);
+
+        // Render texture to the screen
+        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
 
         // Update screen
         SDL_RenderPresent(gRenderer);
