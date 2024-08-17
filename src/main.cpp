@@ -1,3 +1,4 @@
+#include "LTexture.h"
 #include <SDL.h>
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
@@ -26,8 +27,9 @@ SDL_Window *gWindow = NULL;
 // The window renderer
 SDL_Renderer *gRenderer = NULL;
 
-// Currently dislayed texuture
-SDL_Texture *gTexture = NULL;
+// Scene textures
+LTexture gFooTexture;
+LTexture gBackgroundTexture;
 
 // Creating the window
 bool init() {
@@ -73,38 +75,19 @@ bool init() {
   return success;
 }
 
-SDL_Texture *load_texture(std::string path) {
-  // The final texture
-  SDL_Texture *new_texture = NULL;
-
-  // Load images at specified path
-  SDL_Surface *loaded_surface = IMG_Load(path.c_str());
-
-  if (loaded_surface == NULL) {
-    printf("Unable to load surface %s! SDL error: %s\n", path.c_str(),
-           IMG_GetError());
-  } else {
-    // Create texture from surface pixels
-    new_texture = SDL_CreateTextureFromSurface(gRenderer, loaded_surface);
-
-    if (new_texture == NULL) {
-      printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(),
-             IMG_GetError());
-    }
-
-    SDL_FreeSurface(loaded_surface);
-  }
-
-  return new_texture;
-}
-
 bool load_media() {
   bool success = true;
 
-  gTexture = load_texture("09_the_viewport/viewport.png");
+  // Load 'Foo' texture
+  if (!gFooTexture.load_from_file("10_color_keying/foo.png", gRenderer)) {
+    printf("Failed to load Foo texture image!\n");
+    success = false;
+  }
 
-  if (gTexture == NULL) {
-    printf("Unable to load texture! SDL Error: %s\n", SDL_GetError());
+  // Load background texture
+  if (!gBackgroundTexture.load_from_file("10_color_keying/background.png",
+                                         gRenderer)) {
+    printf("Failed to load background texture image!\n");
     success = false;
   }
 
@@ -114,8 +97,9 @@ bool load_media() {
 // Deallocate memory before we exit
 void close() {
   // Free loaded image
-  SDL_DestroyTexture(gTexture);
-  gTexture = NULL;
+  printf("Freeing textures...\n");
+  gBackgroundTexture.free();
+  gFooTexture.free();
 
   // Destroy window
   printf("Destroying the window...\n");
@@ -152,43 +136,16 @@ int main() {
             // User presses a key
           }
         }
-
+        
         // Clear screen
         SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer);
 
-        // Render top left corner viewport
-        SDL_Rect topLeftViewport;
-        topLeftViewport.x = 0;
-        topLeftViewport.y = 0;
-        topLeftViewport.w = SCREEN_WIDTH / 2;
-        topLeftViewport.h = SCREEN_HEIGHT / 2;
-        SDL_RenderSetViewport(gRenderer, &topLeftViewport);
+        // Render background texture to screen
+        gBackgroundTexture.render(0, 0, gRenderer);
 
-        // Render texture to the screen
-        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
-
-        // Render top right corner viewport
-        SDL_Rect topRightViewport;
-        topRightViewport.x = SCREEN_WIDTH / 2;
-        topRightViewport.y = 0;
-        topRightViewport.w = SCREEN_WIDTH / 2;
-        topRightViewport.h = SCREEN_HEIGHT / 2;
-        SDL_RenderSetViewport(gRenderer, &topRightViewport);
-
-        // Render texture to the screen
-        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
-
-        // Render bottom half
-        SDL_Rect bottomHalf;
-        bottomHalf.x = 0;
-        bottomHalf.y = SCREEN_HEIGHT / 2;
-        bottomHalf.w = SCREEN_WIDTH;
-        bottomHalf.h = SCREEN_HEIGHT / 2;
-        SDL_RenderSetViewport(gRenderer, &bottomHalf);
-
-        // Render texture to the screen
-        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+        // Render foo to the screen
+        gFooTexture.render(240, 190, gRenderer);
 
         // Update screen
         SDL_RenderPresent(gRenderer);

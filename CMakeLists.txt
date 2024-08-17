@@ -13,6 +13,8 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 set( SOURCE_LEARN_SDL
     src/main.cpp 
+    src/LTexture.cpp 
+    src/LTexture.h
 )
 
 include_directories(src)
