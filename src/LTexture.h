@@ -1,8 +1,8 @@
 #ifndef LTEXTURE_H
 #define LTEXTURE_H
 
-#include <string>
 #include <SDL2/SDL_render.h>
+#include <string>
 
 class LTexture {
 public:
@@ -19,14 +19,14 @@ public:
   void free();
 
   // Renders textures at given point
-  void render(int x, int y, SDL_Renderer *gRenderer);
+  void render(int x, int y, SDL_Renderer *gRenderer, SDL_Rect *clip = NULL);
 
   // Gets image dimensions
   int getWidth();
   int getHeight();
 
 private:
-  // The actual texture 
+  // The actual texture
   SDL_Texture *mTexture;
 
   int mWidth;

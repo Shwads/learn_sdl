@@ -3,6 +3,7 @@
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_platform.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
@@ -27,11 +28,15 @@ SDL_Window *gWindow = NULL;
 // The window renderer
 SDL_Renderer *gRenderer = NULL;
 
-// Scene textures
-LTexture gFooTexture;
-LTexture gBackgroundTexture;
+// Scene sprites
+SDL_Rect gSpriteClips[4];
+LTexture gSpriteSheetTexture;
 
-// Creating the window
+//
+// ==============================================
+//              CREATING THE WINDOW
+// ==============================================
+//
 bool init() {
   bool success = true;
 
@@ -74,21 +79,42 @@ bool init() {
 
   return success;
 }
+//
+//
+//
 
 bool load_media() {
   bool success = true;
 
-  // Load 'Foo' texture
-  if (!gFooTexture.load_from_file("10_color_keying/foo.png", gRenderer)) {
-    printf("Failed to load Foo texture image!\n");
+  // Load sprite sheet texture
+  if (!gSpriteSheetTexture.load_from_file(
+          "11_clip_rendering_and_sprite_sheets/dots.png", gRenderer)) {
+    printf("Failed to load sprite sheet texture!\n");
     success = false;
-  }
+  } else {
+    // Set top left sprite
+    gSpriteClips[0].x = 0;
+    gSpriteClips[0].y = 0;
+    gSpriteClips[0].w = 100;
+    gSpriteClips[0].h = 100;
 
-  // Load background texture
-  if (!gBackgroundTexture.load_from_file("10_color_keying/background.png",
-                                         gRenderer)) {
-    printf("Failed to load background texture image!\n");
-    success = false;
+    // Set top right sprite
+    gSpriteClips[1].x = 100;
+    gSpriteClips[1].y = 0;
+    gSpriteClips[1].w = 100;
+    gSpriteClips[1].h = 100;
+
+    // Set bottom left sprite
+    gSpriteClips[2].w = 0;
+    gSpriteClips[2].y = 100;
+    gSpriteClips[2].w = 100;
+    gSpriteClips[2].h = 100;
+
+    // Set bottom right sprite
+    gSpriteClips[3].x = 100;
+    gSpriteClips[3].y = 100;
+    gSpriteClips[3].w = 100;
+    gSpriteClips[3].h = 100;
   }
 
   return success;
@@ -98,8 +124,7 @@ bool load_media() {
 void close() {
   // Free loaded image
   printf("Freeing textures...\n");
-  gBackgroundTexture.free();
-  gFooTexture.free();
+  gSpriteSheetTexture.free();
 
   // Destroy window
   printf("Destroying the window...\n");
@@ -136,16 +161,26 @@ int main() {
             // User presses a key
           }
         }
-        
-        // Clear screen
+
+        // Clear the screen
         SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(gRenderer);
 
-        // Render background texture to screen
-        gBackgroundTexture.render(0, 0, gRenderer);
+        // Render top left sprite
+        gSpriteSheetTexture.render(0, 0, gRenderer, &gSpriteClips[0]);
 
-        // Render foo to the screen
-        gFooTexture.render(240, 190, gRenderer);
+        // Render top right sprite
+        gSpriteSheetTexture.render(SCREEN_WIDTH - gSpriteClips[1].w, 0,
+                                   gRenderer, &gSpriteClips[1]);
+
+        // Render bottom left sprite
+        gSpriteSheetTexture.render(0, SCREEN_HEIGHT - gSpriteClips[2].h,
+                                   gRenderer, &gSpriteClips[2]);
+
+        // Render bottom right sprite
+        gSpriteSheetTexture.render(SCREEN_WIDTH - gSpriteClips[3].w,
+                                   SCREEN_HEIGHT - gSpriteClips[3].h, gRenderer,
+                                   &gSpriteClips[3]);
 
         // Update screen
         SDL_RenderPresent(gRenderer);

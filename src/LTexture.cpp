@@ -1,6 +1,7 @@
 #include "LTexture.h"
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_surface.h>
@@ -66,9 +67,18 @@ void LTexture::free() {
   }
 }
 
-void LTexture::render(int x, int y, SDL_Renderer *gRenderer) {
+// clip in render copy to tell the function to only copy part of the texture
+// to the screen's renderer
+void LTexture::render(int x, int y, SDL_Renderer *gRenderer, SDL_Rect *clip) {
   SDL_Rect render_quad = {x, y, mWidth, mHeight};
-  SDL_RenderCopy(gRenderer, mTexture, NULL, &render_quad);
+
+  if (clip != NULL) {
+    render_quad.w = clip->w;
+    render_quad.h = clip->h;
+  }
+
+  // Render to screen
+  SDL_RenderCopy(gRenderer, mTexture, clip, &render_quad);
 }
 
 int LTexture::getWidth() { return mWidth; }
